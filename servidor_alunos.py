@@ -12,10 +12,12 @@ def hello2():
         return "Eder, Ana e outros"   #a funcao retorna uma string
 
 dados = {"alunos":[
-                   {"nome":"lucas","id":15},
-                   {"nome":"cicero","id":29},
+                    {"nome":"lucas","id":15},
+                    {"nome":"cicero","id":29},
                   ], 
-        "professores":[]}
+        "professores":[
+                    {"nome":"paulo","id":37}
+        ]}
 
 '''atende em /alunos, verbo GET'''
 @app.route("/alunos", methods=["GET"])
@@ -37,6 +39,11 @@ def alunoPorId(nAluno):
 def cria_aluno():
     dict = request.json #request.json representa um arquivo json enviado ao servidor
     #nosso servidor recebeu um arquivo e colocou nessa variavel
+    if "nome" not in dict:
+        return {'erro':'aluno sem nome'}, 400
+    for i in dados['alunos']:
+        if i['id'] == dict['id']:
+            return {'erro':'id ja utilizada'}, 400
     dados['alunos'].append(dict)
     return jsonify(dados['alunos']) 
 
@@ -61,13 +68,68 @@ def apaga(nAluno):
 @app.route("/alunos/<int:nAluno>", methods=["PUT"])
 def edita(nAluno):
     dictNome = request.json
+    if "nome" not in dictNome:
+        return {'erro':'aluno sem nome'}, 400
     for i in dados['alunos']:
         if i['id'] == nAluno:
             i['nome'] = dictNome['nome']
             return dados
     return {'erro':'aluno nao encontrado'}, 400
 
+
+'''
+//////////////////////////////////////// SERVIDOR PROFESSORES
+'''
+
+'''@app.route("/professores", methods=["GET"])
+def professores():
+    return jsonify(dados['professores']) 
+
+@app.route("/professores/<int:nProf>")
+def profPorId(nProf):
+    for i in dados['professores']:
+        if i['id'] == nProf:
+            return i
+    return {'erro':'prof nao encontrado'}, 400
+
+@app.route("/professor", methods=["POST"])
+def cria_professor():
+    dictProf = request.json #request.json representa um arquivo json enviado ao servidor
+    #nosso servidor recebeu um arquivo e colocou nessa variavel
+    if "nome" not in dictProf:
+        return {'erro':'professor sem nome'}, 400
+    for i in dados['professores']:
+        if i['id'] == dictProf['id']:
+            return {'erro':'id ja utilizada'}, 400
+    dados['professores'].append(dictProf)
+    return jsonify(dados['professores']) 
+
+
+@app.route("/professores/<int:nProf>", methods=["DELETE"])
+def apagaProf(nProf):
+    indice = 0
+    for i in dados['professores']:
+        if i['id'] == nProf:
+            del (dados['professores'])[indice]
+            return jsonify(dados['professores'])
+        indice += 1
+    return {'erro':'professor nao encontrado'}, 400
         
+    
+@app.route("/professores/<int:nProf>", methods=["PUT"])
+def editaNomeProf(nProf):
+    dictProfNome = request.json
+    if "nome" not in dictProfNome:
+        return {'erro':'professor sem nome'}, 400
+    for i in dados['professores']:
+        if i['id'] == nProf:
+            i['nome'] = dictProfNome['nome']
+            return dados
+    return {'erro':'professor nao encontrado'}, 400
+
+
+
+
 
 if __name__ == '__main__':
-        app.run(host = 'localhost', port = 5002, debug = True)
+        app.run(host = 'localhost', port = 5002, debug = True)'''
